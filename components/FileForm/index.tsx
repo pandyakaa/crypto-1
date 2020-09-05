@@ -4,18 +4,15 @@ import { useInput } from '../../util/useInput';
 
 const TextForm: FunctionComponent = () => {
     const { value: plainText, bind: bindPlainText, setValue: setPlainText } = useInput('');
-    const { value: decryptedText, bind: bindDecryptedText, setValue: setDecryptedText } = useInput('');
     const { value: cipherKey, bind: bindCipherKey } = useInput('');
     const { value: algorithm, bind: bindAlgorithm } = useInput('Vignere Cipher');
-    const handleEncrypt = () => {
-        setDecryptedText(plainText + ' - ' + algorithm + ' - ' + cipherKey);
-    };
+    const handleEncrypt = () => {};
     const handleDecrypt = () => {
-        setPlainText(decryptedText + ' - ' + algorithm + ' - ' + cipherKey);
+        setPlainText(' - ' + algorithm + ' - ' + cipherKey);
     };
     return (
         <>
-            Plain text
+            Original File
             <textarea {...bindPlainText} name="message" rows={5} cols={70} />
             <Card bg="light">
                 <Row className="mt-2 justify-content-around">
@@ -28,17 +25,13 @@ const TextForm: FunctionComponent = () => {
                         <option value="3">Auto Key Vignere Cipher</option>
                     </select>
                     <Button variant="primary" onClick={handleEncrypt}>
-                        Encrypt ↓
+                        Encrypt
                     </Button>
                     <Button variant="primary" onClick={handleDecrypt}>
-                        Decrypt ↑
+                        Decrypt
                     </Button>
                 </Row>
             </Card>
-            Encrypted text
-            <textarea {...bindDecryptedText} name="encrypted_message" rows={5} cols={70}>
-                {decryptedText}
-            </textarea>
         </>
     );
 };
