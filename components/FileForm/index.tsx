@@ -3,17 +3,21 @@ import { Row, Button, Card } from 'react-bootstrap';
 import { useInput } from '../../util/useInput';
 
 const TextForm: FunctionComponent = () => {
-    const { value: plainText, bind: bindPlainText, setValue: setPlainText } = useInput('');
+    const { value: originalFile, bind: bindOriginalFile, setValue: setOriginalFile } = useInput(undefined);
     const { value: cipherKey, bind: bindCipherKey } = useInput('');
     const { value: algorithm, bind: bindAlgorithm } = useInput('Vignere Cipher');
-    const handleEncrypt = () => {};
+    const handleEncrypt = () => {
+        console.log(originalFile);
+    };
     const handleDecrypt = () => {
-        setPlainText(' - ' + algorithm + ' - ' + cipherKey);
+        console.log(originalFile);
     };
     return (
         <>
             Original File
-            <textarea {...bindPlainText} name="message" rows={5} cols={70} />
+            <Row className="mt-3 mb-4 justify-content-center">
+                <input {...bindOriginalFile} className="pl-5" type="file" />
+            </Row>
             <Card bg="light">
                 <Row className="mt-2 justify-content-around">
                     <input {...bindCipherKey} className="w-75" type="text" placeholder="key" />
