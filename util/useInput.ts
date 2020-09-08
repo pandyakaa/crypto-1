@@ -15,3 +15,18 @@ export const useInput = (initialValue) => {
         }
     };
 };
+
+export const useInputFile = (initialValue) => {
+    const [value, setValue] = useState(initialValue);
+
+    return {
+        value,
+        setValue,
+        reset: () => setValue(undefined),
+        bind: {
+            onChange: (event) => {
+                setValue(event.target.files);
+            }
+        }
+    };
+};

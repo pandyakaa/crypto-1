@@ -23,6 +23,7 @@
   "homepage": "https://github.com/pandyakaa/crypto-1#readme",
   "dependencies": {
     "bootstrap": "^4.5.2",
+    "file-saver": "^2.0.2",
     "lodash": "^4.17.19",
     "next": "^9.5.2",
     "react": "^16.13.1",

@@ -1,16 +1,38 @@
 import React, { useState, FunctionComponent } from 'react';
+import FileSaver from 'file-saver';
 import { Row, Button, Card } from 'react-bootstrap';
-import { useInput } from '../../util/useInput';
+import { useInput, useInputFile } from '@util/useInput';
+import { createRequest } from '@util/requestUtil';
 
 const TextForm: FunctionComponent = () => {
-    const { value: originalFile, bind: bindOriginalFile, setValue: setOriginalFile } = useInput(undefined);
+    const { value: originalFile, bind: bindOriginalFile, setValue: setOriginalFile } = useInputFile('');
     const { value: cipherKey, bind: bindCipherKey } = useInput('');
     const { value: algorithm, bind: bindAlgorithm } = useInput('Vignere Cipher');
-    const handleEncrypt = () => {
-        console.log(originalFile);
+    const handleEncrypt = async () => {
+        const { url } = createRequest(algorithm, 'file', 'encrypt', cipherKey, '');
+        const formData = new FormData();
+        const filename = `encrypted-${originalFile[0].name}`;
+        formData.append('file', originalFile[0]);
+        formData.append('key', cipherKey);
+        const response = await fetch(url, {
+            method: 'POST',
+            body: formData
+        });
+        const responseBlob = await response.blob();
+        await FileSaver.saveAs(responseBlob, filename);
     };
-    const handleDecrypt = () => {
-        console.log(originalFile);
+    const handleDecrypt = async () => {
+        const { url } = createRequest(algorithm, 'file', 'decrypt', cipherKey, '');
+        const formData = new FormData();
+        const filename = `decrypted-${originalFile[0].name}`;
+        formData.append('file', originalFile[0]);
+        formData.append('key', cipherKey);
+        const response = await fetch(url, {
+            method: 'POST',
+            body: formData
+        });
+        const responseBlob = await response.blob();
+        await FileSaver.saveAs(responseBlob, filename);
     };
     return (
         <>
@@ -24,9 +46,15 @@ const TextForm: FunctionComponent = () => {
                 </Row>
                 <Row className="mt-2 mb-2 justify-content-around">
                     <select {...bindAlgorithm}>
-                        <option value="1">Vignere Cipher</option>
-                        <option value="2">Full Vignere Cipher</option>
-                        <option value="3">Auto Key Vignere Cipher</option>
+                        <option value="vigenere">Vigenere Cipher</option>
+                        <option value="vigenere/full">Full Vigenere Cipher</option>
+                        <option value="vigenere/auto">Auto Key Vigenere Cipher</option>
+                        <option value="vigenere/extended">Extended Vigenere Cipher</option>
+                        <option value="playfair">Playfair Cipher</option>
+                        <option value="super">Super Encryption</option>
+                        <option value="affine">Affine Cipher</option>
+                        <option value="hill">Hill Cipher</option>
+                        <option value="enigma">Enigma Cipher</option>
                     </select>
                     <Button variant="primary" onClick={handleEncrypt}>
                         Encrypt

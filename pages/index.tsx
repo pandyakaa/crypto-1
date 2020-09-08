@@ -11,7 +11,7 @@ const Index: SFC = () => {
                 <title>Classic Cryptography</title>
             </Head>
             <Row className="vh-100 justify-content-center align-items-center">
-                <Card style={{ width: '640px', height: '540px' }}>
+                <Card style={{ width: '640px', height: '620px' }}>
                     <Card.Header>Encryption Tool</Card.Header>
                     <Card.Body>
                         <Tabs defaultActiveKey="text" id="input-type-tab" variant="pills">

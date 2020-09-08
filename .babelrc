@@ -9,7 +9,8 @@
             "@components": "./components",
             "@themes": "./themes",
             "@factory": "./factory",
-            "@interfaces": "./interfaces"
+            "@interfaces": "./interfaces",
+            "@util": "./util"
           }
         }
       ]
