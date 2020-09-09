@@ -7,7 +7,7 @@ import { createRequest } from '@util/requestUtil';
 const TextForm: FunctionComponent = () => {
     const { value: originalFile, bind: bindOriginalFile, setValue: setOriginalFile } = useInputFile('');
     const { value: cipherKey, bind: bindCipherKey } = useInput('');
-    const { value: algorithm, bind: bindAlgorithm } = useInput('Vignere Cipher');
+    const { value: algorithm, bind: bindAlgorithm } = useInput('vigenere');
     const handleEncrypt = async () => {
         const { url } = createRequest(algorithm, 'file', 'encrypt', cipherKey, '');
         const formData = new FormData();

@@ -1,5 +1,5 @@
 export const createRequest = (algorithm, type, func, key = '', message = '') => {
-    const url = `http://127.0.0.1:5000/${func}/${type}/${algorithm}`;
+    const url = `http://11ce51fc8d04.ngrok.io/${func}/${type}/${algorithm}`;
     const body = {
         message: message,
         key: key

@@ -5,13 +5,30 @@ import { createRequest } from '@util/requestUtil';
 
 const TextForm: FunctionComponent = () => {
     const { value: plainText, bind: bindPlainText, setValue: setPlainText } = useInput('');
-    const { value: decryptedText, bind: bindDecryptedText, setValue: setDecryptedText } = useInput('');
+    const { value: encryptedText, bind: bindEncryptedText, setValue: setEncryptedText } = useInput('');
     const { value: cipherKey, bind: bindCipherKey } = useInput('');
-    const { value: algorithm, bind: bindAlgorithm } = useInput('vignere');
+    const { value: algorithm, bind: bindAlgorithm } = useInput('vigenere');
     const handleEncrypt = async () => {
-        // setDecryptedText(plainText + ' - ' + algorithm + ' - ' + cipherKey);
         const requestObject = createRequest(algorithm, 'text', 'encrypt', cipherKey, plainText);
-        console.log(requestObject);
+        const req = await fetch(requestObject.url, {
+            mode: 'cors',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: requestObject.body
+        });
+        let spaced = '';
+
+        const response = await req.json();
+        const splitted = response.splitted_ciphertext;
+        for (let i = 0; i < splitted.length; i++) {
+            spaced += splitted[i] + ' ';
+        }
+        setEncryptedText(response.ciphertext + `\n${spaced}`);
+    };
+    const handleDecrypt = async () => {
+        const requestObject = createRequest(algorithm, 'text', 'decrypt', cipherKey, encryptedText);
         const req = await fetch(requestObject.url, {
             mode: 'cors',
             method: 'POST',
@@ -21,10 +38,8 @@ const TextForm: FunctionComponent = () => {
             body: requestObject.body
         });
         const response = await req.json();
-        setDecryptedText(response.ciphertext);
-    };
-    const handleDecrypt = () => {
-        setPlainText(decryptedText + ' - ' + algorithm + ' - ' + cipherKey);
+        console.log(response);
+        setPlainText(response.plaintext);
     };
     const handleDownload = () => {
         alert('download');
@@ -58,8 +73,8 @@ const TextForm: FunctionComponent = () => {
                 </Row>
             </Card>
             Encrypted text
-            <textarea {...bindDecryptedText} name="encrypted_message" rows={5} cols={70}>
-                {decryptedText}
+            <textarea {...bindEncryptedText} name="encrypted_message" rows={5} cols={70}>
+                {encryptedText}
             </textarea>
             <Row className="mt-2 mb-2 justify-content-around">
                 <Button variant="primary" onClick={handleDownload}>
