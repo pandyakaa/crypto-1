@@ -8,10 +8,10 @@ const Index: SFC = () => {
     return (
         <div>
             <Head>
-                <title>Classic Cryptography</title>
+                <title>Modern Cryptography</title>
             </Head>
-            <Row className="vh-100 justify-content-center align-items-center">
-                <Card style={{ width: '640px', height: '620px' }}>
+            <Row className="vh-100 vw-100 justify-content-center align-items-center">
+                <Card style={{ width: '640px', height: '720px' }}>
                     <Card.Header>Encryption Tool</Card.Header>
                     <Card.Body>
                         <Tabs defaultActiveKey="text" id="input-type-tab" variant="pills">
