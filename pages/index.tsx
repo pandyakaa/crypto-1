@@ -3,6 +3,7 @@ import { Tabs, Tab, Card, Row } from 'react-bootstrap';
 import TextForm from '@components/TextForm';
 import FileForm from '@components/FileForm';
 import Encryption from '@components/Encryption';
+import DiffieHellman from '@components/DiffieHellman';
 import Head from 'next/head';
 
 const Index: SFC = () => {
@@ -20,7 +21,7 @@ const Index: SFC = () => {
                                 <Encryption />
                             </Tab>
                             <Tab className="p-2" eventKey="diffieHellman" title="Diffie-Hellman">
-                                <Encryption />
+                                <DiffieHellman />
                             </Tab>
                         </Tabs>
                     </Card.Body>

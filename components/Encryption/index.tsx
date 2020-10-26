@@ -63,7 +63,7 @@ const Encryption: FunctionComponent = () => {
                         <div className="row pt-4 w-100">
                             <div className="col">
                                 Plaintext
-                                <textarea name="privateKey" rows={4} cols={50} />
+                                <textarea name="plaintext" rows={4} cols={50} />
                             </div>
                             <div className="col-2 mr-2">
                                 <Button variant="primary" className="btn-block" onClick={handleEncrypt}>
@@ -78,7 +78,7 @@ const Encryption: FunctionComponent = () => {
                             </div>
                             <div className="col">
                                 Ciphertext
-                                <textarea name="privateKey" rows={4} cols={50} />
+                                <textarea name="ciphertext" rows={4} cols={50} />
                             </div>
                         </div>
                     </Tab>
