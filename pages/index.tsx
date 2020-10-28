@@ -1,4 +1,4 @@
-import React, { SFC } from 'react';
+import React, { FunctionComponent, SFC } from 'react';
 import { Tabs, Tab, Card, Row } from 'react-bootstrap';
 import TextForm from '@components/TextForm';
 import FileForm from '@components/FileForm';
@@ -6,7 +6,7 @@ import Encryption from '@components/Encryption';
 import DiffieHellman from '@components/DiffieHellman';
 import Head from 'next/head';
 
-const Index: SFC = () => {
+const Index: FunctionComponent = () => {
     return (
         <div>
             <Head>
