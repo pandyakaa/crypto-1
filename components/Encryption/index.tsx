@@ -5,12 +5,51 @@ import { useInput, useInputFile } from '@util/useInput';
 import { createRequest } from '@util/requestUtil';
 
 const Encryption: FunctionComponent = () => {
-    const handleGenerateKey = () => {
-        alert('generate key');
+    const { value: algorithm, bind: bindAlgorithm } = useInput('rsa');
+    const { value: publicKey, bind: bindPublicKey, setValue: setPublicKey } = useInput('');
+    const { value: privateKey, bind: bindPrivateKey, setValue: setPrivateKey } = useInput('');
+    const { value: executionTime, bind: bindExecutionTime, setValue: setExecutionTime } = useInput('...');
+    const { value: fileSize, bind: bindFileSize, setValue: setFileSize } = useInput('...');
+
+    const handleGenerateKey = async () => {
+        let req;
+        switch (algorithm) {
+            case 'rsa':
+                req = await fetch(process.env.NEXT_PUBLIC_API_URL + '/key/rsa', {
+                    mode: 'cors',
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                break;
+            case 'elgamal':
+                req = await fetch(process.env.NEXT_PUBLIC_API_URL + '/key/elgamal', {
+                    mode: 'cors',
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                break;
+            default:
+                break;
+        }
+
+        const response = await req.json();
+        setPublicKey(response.public_key);
+        setPrivateKey(response.private_key);
+    };
+
+    const handleUploadKey = () => {
+        alert('upload key');
     };
 
     const handleDownloadKey = () => {
-        alert('download key');
+        const publicBlob = new Blob([publicKey], { type: 'text/plain;charset=utf-8' });
+        const privateBlob = new Blob([privateKey], { type: 'text/plain;charset=utf-8' });
+        FileSaver.saveAs(publicBlob, 'public.pub');
+        FileSaver.saveAs(privateBlob, 'private.pri');
     };
 
     const handleEncrypt = () => {
@@ -36,25 +75,29 @@ const Encryption: FunctionComponent = () => {
     return (
         <div className="container">
             <div className="row rounded bg-light pt-4 pb-4">
-                <div className="col-2">
+                <div className="col">
                     <Button variant="primary" className="btn-block" onClick={handleGenerateKey}>
                         Generate Key
                     </Button>
-                    <Button variant="primary" className="btn-block" onClick={handleDownloadKey}>
+                    <Button variant="primary" className="btn-block mb-2" onClick={handleDownloadKey}>
                         Download Key
                     </Button>
-                    <select className="mt-3" style={{ width: '100%' }}>
+                    Upload Public Key
+                    <input className="m-auto" type="file" />
+                    Upload Private Key
+                    <input className="m-auto" type="file" />
+                    <select {...bindAlgorithm} className="mt-3" style={{ width: '100%' }}>
                         <option value="rsa">RSA</option>
                         <option value="elgamal">Elgamal</option>
                     </select>
                 </div>
                 <div className="col">
                     Public Key
-                    <textarea name="publicKey" rows={8} cols={50} />
+                    <textarea {...bindPublicKey} name="publicKey" rows={8} cols={40} />
                 </div>
                 <div className="col">
                     Private Key
-                    <textarea name="privateKey" rows={8} cols={50} />
+                    <textarea {...bindPrivateKey} name="privateKey" rows={8} cols={40} />
                 </div>
             </div>
             <div className="row pt-4 w-100 h-100">
@@ -94,6 +137,10 @@ const Encryption: FunctionComponent = () => {
                         </div>
                     </Tab>
                 </Tabs>
+            </div>
+            <div className="row pt-4">
+                <div className="col">Execution Time: {executionTime}</div>
+                <div className="col">File Size: {fileSize}</div>
             </div>
         </div>
     );
