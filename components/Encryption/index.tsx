@@ -10,6 +10,8 @@ const Encryption: FunctionComponent = () => {
     const { value: privateKey, bind: bindPrivateKey, setValue: setPrivateKey } = useInput('');
     const { value: executionTime, bind: bindExecutionTime, setValue: setExecutionTime } = useInput('...');
     const { value: fileSize, bind: bindFileSize, setValue: setFileSize } = useInput('...');
+    const { value: plainText, bind: bindPlainText, setValue: setPlainText } = useInput('');
+    const { value: cipherText, bind: bindCipherText, setValue: setCipherText } = useInput('');
 
     const handleGenerateKey = async () => {
         let req;
@@ -66,16 +68,69 @@ const Encryption: FunctionComponent = () => {
         FileSaver.saveAs(privateBlob, 'private.pri');
     };
 
-    const handleEncrypt = () => {
-        alert('encrypt');
+    const handleEncrypt = async () => {
+        let endpoint;
+        switch (algorithm) {
+            case 'rsa':
+                endpoint = '/encrypt/text/rsa';
+                break;
+            case 'elgamal':
+                endpoint = '/encrypt/text/elgamal';
+                break;
+        }
+
+        const body = {
+            message: plainText,
+            public_key: publicKey
+        };
+
+        const req = await fetch(process.env.NEXT_PUBLIC_API_URL + endpoint, {
+            mode: 'cors',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+
+        const response = await req.json();
+        setCipherText(response.ciphertext);
+        setExecutionTime('Execution Time: ' + response.time + ' second');
     };
 
-    const handleDecrypt = () => {
-        alert('decrypt');
+    const handleDecrypt = async () => {
+        let endpoint;
+        switch (algorithm) {
+            case 'rsa':
+                endpoint = '/decrypt/text/rsa';
+                break;
+            case 'elgamal':
+                endpoint = '/decrypt/text/elgamal';
+                break;
+        }
+
+        const body = {
+            message: cipherText,
+            private_key: privateKey
+        };
+
+        const req = await fetch(process.env.NEXT_PUBLIC_API_URL + '/decrypt/text/rsa', {
+            mode: 'cors',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+
+        const response = await req.json();
+        setPlainText(response.plaintext);
+        setExecutionTime('Execution Time: ' + response.time + ' second');
     };
 
-    const handleDownloadText = () => {
-        alert('download text');
+    const handleDownloadCiphertext = () => {
+        const blob = new Blob([cipherText], { type: 'text/plain;charset=utf-8' });
+        FileSaver.saveAs(blob, 'ciphertext.txt');
     };
 
     const handleEncryptFile = () => {
@@ -120,7 +175,7 @@ const Encryption: FunctionComponent = () => {
                         <div className="row pt-4 w-100">
                             <div className="col">
                                 Plaintext
-                                <textarea name="plaintext" rows={4} cols={50} />
+                                <textarea {...bindPlainText} name="plaintext" rows={4} cols={50} />
                             </div>
                             <div className="col-2 mr-2">
                                 <Button variant="primary" className="btn-block" onClick={handleEncrypt}>
@@ -129,13 +184,13 @@ const Encryption: FunctionComponent = () => {
                                 <Button variant="primary" className="btn-block" onClick={handleDecrypt}>
                                     Decrypt ←
                                 </Button>
-                                <Button variant="primary" className="btn-block" onClick={handleDownloadText}>
+                                <Button variant="primary" className="btn-block" onClick={handleDownloadCiphertext}>
                                     Download as .txt
                                 </Button>
                             </div>
                             <div className="col">
                                 Ciphertext
-                                <textarea name="ciphertext" rows={4} cols={50} />
+                                <textarea {...bindCipherText} name="ciphertext" rows={4} cols={50} />
                             </div>
                         </div>
                     </Tab>
@@ -153,8 +208,8 @@ const Encryption: FunctionComponent = () => {
                 </Tabs>
             </div>
             <div className="row pt-4">
-                <div className="col">Execution Time: {executionTime}</div>
-                <div className="col">File Size: {fileSize}</div>
+                <div className="col">{executionTime}</div>
+                <div className="col">{fileSize}</div>
             </div>
         </div>
     );
