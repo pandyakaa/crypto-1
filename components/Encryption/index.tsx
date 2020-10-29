@@ -2,7 +2,6 @@ import React, { FunctionComponent } from 'react';
 import { Row, Button, Card, Tabs, Tab } from 'react-bootstrap';
 import FileSaver from 'file-saver';
 import { useInput, useInputFile } from '@util/useInput';
-import { createRequest } from '@util/requestUtil';
 
 const Encryption: FunctionComponent = () => {
     const { value: algorithm, bind: bindAlgorithm } = useInput('rsa');
