@@ -12,6 +12,7 @@ const Encryption: FunctionComponent = () => {
     const { value: fileSize, bind: bindFileSize, setValue: setFileSize } = useInput('...');
     const { value: plainText, bind: bindPlainText, setValue: setPlainText } = useInput('');
     const { value: cipherText, bind: bindCipherText, setValue: setCipherText } = useInput('');
+    const { value: originalFile, bind: bindOriginalFile, setValue: setOriginalFile } = useInputFile('');
 
     const handleGenerateKey = async () => {
         let req;
@@ -133,12 +134,86 @@ const Encryption: FunctionComponent = () => {
         FileSaver.saveAs(blob, 'ciphertext.txt');
     };
 
-    const handleEncryptFile = () => {
-        alert('encrypt file');
+    const handleEncryptFile = async () => {
+        let endpoint;
+        switch (algorithm) {
+            case 'rsa':
+                endpoint = '/encrypt/file/rsa';
+                break;
+            case 'elgamal':
+                endpoint = '/encrypt/file/elgamal';
+                break;
+        }
+
+        const formData = new FormData();
+        formData.append('file', originalFile[0]);
+        formData.append('public_key', publicKey);
+
+        const req = await fetch(process.env.NEXT_PUBLIC_API_URL + endpoint, {
+            method: 'POST',
+            body: formData
+        });
+
+        const response = await req.json();
+        setExecutionTime('Execution Time: ' + response.time + ' second');
+        setFileSize('File Size: ' + response.file_size + ' byte');
+
+        const fileBody = {
+            path: response.file_loc
+        };
+
+        const reqFile = await fetch(process.env.NEXT_PUBLIC_API_URL + '/download', {
+            mode: 'cors',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(fileBody)
+        });
+
+        const responseBlob = await reqFile.blob();
+        await FileSaver.saveAs(responseBlob);
     };
 
-    const handleDecryptFile = () => {
-        alert('decrypt file');
+    const handleDecryptFile = async () => {
+        let endpoint;
+        switch (algorithm) {
+            case 'rsa':
+                endpoint = '/decrypt/file/rsa';
+                break;
+            case 'elgamal':
+                endpoint = '/decrypt/file/elgamal';
+                break;
+        }
+
+        const formData = new FormData();
+        formData.append('file', originalFile[0]);
+        formData.append('private_key', privateKey);
+
+        const req = await fetch(process.env.NEXT_PUBLIC_API_URL + endpoint, {
+            method: 'POST',
+            body: formData
+        });
+
+        const response = await req.json();
+        setExecutionTime('Execution Time: ' + response.time + ' second');
+        setFileSize('File Size: ' + response.file_size + ' byte');
+
+        const fileBody = {
+            path: response.file_loc
+        };
+
+        const reqFile = await fetch(process.env.NEXT_PUBLIC_API_URL + '/download', {
+            mode: 'cors',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(fileBody)
+        });
+
+        const responseBlob = await reqFile.blob();
+        await FileSaver.saveAs(responseBlob);
     };
 
     return (
@@ -196,7 +271,7 @@ const Encryption: FunctionComponent = () => {
                     </Tab>
                     <Tab eventKey="file" className="w-100" title="File">
                         <div className="row pt-4" style={{ width: '360px' }}>
-                            <input className="m-auto" type="file" />
+                            <input {...bindOriginalFile} className="m-auto" type="file" />
                             <Button variant="primary" className="mt-4 ml-3 btn-block" onClick={handleEncryptFile}>
                                 Encrypt
                             </Button>
