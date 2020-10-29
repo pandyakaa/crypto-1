@@ -41,8 +41,22 @@ const Encryption: FunctionComponent = () => {
         setPrivateKey(response.private_key);
     };
 
-    const handleUploadKey = () => {
-        alert('upload key');
+    const handleUploadPublicKey = (e) => {
+        const reader = new FileReader();
+        reader.onload = async () => {
+            const text = reader.result;
+            setPublicKey(text);
+        };
+        reader.readAsText(e.target.files[0]);
+    };
+
+    const handleUploadPrivateKey = (e) => {
+        const reader = new FileReader();
+        reader.onload = async () => {
+            const text = reader.result;
+            setPrivateKey(text);
+        };
+        reader.readAsText(e.target.files[0]);
     };
 
     const handleDownloadKey = () => {
@@ -83,9 +97,9 @@ const Encryption: FunctionComponent = () => {
                         Download Key
                     </Button>
                     Upload Public Key
-                    <input className="m-auto" type="file" />
+                    <input className="m-auto" type="file" onChange={(e) => handleUploadPublicKey(e)} />
                     Upload Private Key
-                    <input className="m-auto" type="file" />
+                    <input className="m-auto" type="file" onChange={(e) => handleUploadPrivateKey(e)} />
                     <select {...bindAlgorithm} className="mt-3" style={{ width: '100%' }}>
                         <option value="rsa">RSA</option>
                         <option value="elgamal">Elgamal</option>
